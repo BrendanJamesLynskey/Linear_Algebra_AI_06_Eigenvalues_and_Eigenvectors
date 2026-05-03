@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linear Algebra for AI 06 &mdash; Eigenvalues &amp; Eigenvectors</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
+    <style>
+        :root { --bg-primary: #0a0a0a; --bg-card: #0d1117; --bg-code: #161b22; --text-primary: #e6edf3; --text-secondary: #8b949e; --accent: #a78bfa; --accent-dim: #a78bfa44; --accent-glow: #a78bfa33; --accent-2: #f472b6; --accent-3: #fbbf24; --accent-4: #34d399; --border: #21262d; --font-display: 'Space Grotesk', sans-serif; --font-mono: 'JetBrains Mono', 'Fira Code', monospace; --font-body: 'Inter', sans-serif; --max-width: 900px; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-body); font-size: 17px; line-height: 1.7; overflow-x: hidden; }
+        .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 2rem 1.5rem; text-align: center; position: relative; }
+        .hero::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 700px; height: 600px; background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%); pointer-events: none; z-index: 0; }
+        .hero > * { position: relative; z-index: 1; }
+        .series-label { font-family: var(--font-mono); font-size: 0.85rem; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1rem; }
+        .hero h1 { font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 700; color: var(--text-primary); line-height: 1.2; margin-bottom: 1rem; }
+        .hero h1 .accent { color: var(--accent); }
+        .hero .subtitle { font-size: 1.1rem; color: var(--text-secondary); max-width: 640px; margin-bottom: 2rem; }
+        .tags { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin-bottom: 2.5rem; }
+        .tag { font-family: var(--font-mono); font-size: 0.75rem; padding: 0.25rem 0.75rem; border-radius: 999px; border: 1px solid var(--accent); color: var(--accent); background: var(--accent-dim); white-space: nowrap; }
+        .pipeline { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.25rem; margin-bottom: 1rem; max-width: var(--max-width); }
+        .pipeline-step { font-family: var(--font-mono); font-size: 0.7rem; padding: 0.3rem 0.7rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; color: var(--text-secondary); white-space: nowrap; }
+        .pipeline-arrow { color: var(--accent); font-size: 0.9rem; font-weight: 700; }
+        .slide { min-height: 100vh; max-width: var(--max-width); margin: 0 auto; padding: 4rem 1.5rem; position: relative; display: flex; flex-direction: column; justify-content: center; }
+        .slide-number { font-family: var(--font-display); font-size: 5rem; font-weight: 700; color: var(--accent-dim); position: absolute; top: 2rem; right: 1.5rem; line-height: 1; user-select: none; }
+        .slide h2 { font-family: var(--font-display); font-size: 1.9rem; font-weight: 700; color: var(--accent); margin-bottom: 1.5rem; line-height: 1.25; }
+        .slide h3 { font-family: var(--font-display); font-size: 1.3rem; font-weight: 600; color: var(--text-primary); margin-top: 1.5rem; margin-bottom: 0.75rem; }
+        .slide p { margin-bottom: 1rem; color: var(--text-secondary); }
+        .slide p strong { color: var(--text-primary); }
+        .slide ul, .slide ol { margin-bottom: 1rem; padding-left: 1.5rem; color: var(--text-secondary); }
+        .slide li { margin-bottom: 0.4rem; }
+        .slide li strong { color: var(--text-primary); }
+        .slide code { background: var(--bg-code); padding: 0.1rem 0.35rem; border-radius: 3px; font-family: var(--font-mono); font-size: 0.85em; color: var(--accent); }
+        .table-wrap { overflow-x: auto; margin: 1.25rem 0; border-radius: 8px; border: 1px solid var(--border); }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        th { background: var(--bg-code); color: var(--accent); font-weight: 600; text-align: left; padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); font-family: var(--font-display); white-space: nowrap; }
+        td { padding: 0.6rem 1rem; border-bottom: 1px solid var(--border); color: var(--text-secondary); vertical-align: top; }
+        tr:last-child td { border-bottom: none; }
+        tr:nth-child(even) td { background: rgba(13, 17, 23, 0.5); }
+        .diagram-grid { display: grid; gap: 0.75rem; margin: 1.5rem 0; padding: 1.5rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; }
+        .diagram-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+        .diagram-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+        .diagram-panel { padding: 1rem; background: var(--bg-code); border: 1px solid var(--border); border-radius: 6px; }
+        .diagram-panel.accent-border { border-left: 3px solid var(--accent); }
+        .diagram-panel.r { border-left: 3px solid var(--accent-2); }
+        .diagram-panel.y { border-left: 3px solid var(--accent-3); }
+        .diagram-panel.g { border-left: 3px solid var(--accent-4); }
+        .diagram-panel h4 { font-family: var(--font-display); font-size: 1rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .diagram-panel.r h4 { color: var(--accent-2); } .diagram-panel.y h4 { color: var(--accent-3); } .diagram-panel.g h4 { color: var(--accent-4); }
+        .diagram-panel p, .diagram-panel ul { font-size: 0.9rem; }
+        .callout { background: var(--bg-card); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 1rem 1.25rem; margin: 1.25rem 0; }
+        .callout p { margin-bottom: 0; }
+        .callout .callout-label { font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem; }
+        .canvas-wrap { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin: 1.25rem 0; overflow-x: auto; }
+        .canvas-wrap canvas, .canvas-wrap svg { display: block; margin: 0 auto; max-width: 100%; }
+        .control-panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; margin: 1.25rem 0; }
+        .control-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+        .control-row label { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-secondary); min-width: 130px; }
+        .control-row input[type="range"] { flex: 1; min-width: 150px; accent-color: var(--accent); }
+        .control-row .val { font-family: var(--font-mono); font-size: 0.85rem; color: var(--accent); min-width: 80px; text-align: right; }
+        .btn { font-family: var(--font-mono); font-size: 0.8rem; padding: 0.4rem 0.9rem; background: var(--accent-dim); color: var(--accent); border: 1px solid var(--accent); border-radius: 4px; cursor: pointer; transition: background 0.15s ease; }
+        .btn:hover { background: rgba(167,139,250,0.25); }
+        .btn.secondary { background: var(--bg-code); color: var(--text-secondary); border-color: var(--border); }
+        .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.5rem; margin-top: 0.75rem; }
+        .metric { background: var(--bg-code); border: 1px solid var(--border); border-radius: 6px; padding: 0.6rem 0.8rem; text-align: center; }
+        .metric .metric-label { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.08em; }
+        .metric .metric-value { font-family: var(--font-display); font-size: 1.25rem; color: var(--accent); font-weight: 600; margin-top: 0.2rem; }
+        .contents-list { list-style: none; padding-left: 0; counter-reset: contents; }
+        .contents-list li { counter-increment: contents; padding: 0.6rem 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 1rem; }
+        .contents-list li:last-child { border-bottom: none; }
+        .contents-list li::before { content: counter(contents, decimal-leading-zero); font-family: var(--font-mono); font-size: 0.85rem; color: var(--accent); min-width: 2rem; }
+        .contents-list a { color: var(--text-primary); text-decoration: none; }
+        .contents-list a:hover { color: var(--accent); }
+        .footer { text-align: center; padding: 3rem 1.5rem; color: var(--text-secondary); font-size: 0.85rem; border-top: 1px solid var(--border); max-width: var(--max-width); margin: 0 auto; }
+        .footer a { color: var(--accent); text-decoration: none; }
+        .katex { color: var(--text-primary); } .katex-display { margin: 1rem 0; overflow-x: auto; overflow-y: hidden; }
+        @media (max-width: 640px) { .slide { padding: 3rem 1rem; min-height: auto; } .slide-number { font-size: 3rem; top: 1.5rem; right: 1rem; } .slide h2 { font-size: 1.5rem; } .diagram-grid.cols-2, .diagram-grid.cols-3 { grid-template-columns: 1fr; } .hero h1 { font-size: 1.8rem; } table { font-size: 0.78rem; } }
+    </style>
+</head>
+<body>
+
+<header class="hero">
+    <div class="series-label">Linear Algebra for AI &mdash; Presentation 06</div>
+    <h1>Eigenvalues &amp; <span class="accent">Eigenvectors</span></h1>
+    <p class="subtitle">A matrix's eigenvectors are the directions it doesn't rotate. Find them and the matrix becomes a diagonal &mdash; and a thousand questions about gradients, stability, PCA and Hessians become trivial.</p>
+
+    <div class="tags">
+        <span class="tag">eigenvector</span><span class="tag">eigenvalue</span>
+        <span class="tag">spectral theorem</span><span class="tag">power iteration</span>
+        <span class="tag">PCA</span><span class="tag">Hessian</span>
+    </div>
+
+    <div class="pipeline">
+        <span class="pipeline-step">Av = λv</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">diagonalise</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">spectral theorem</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">PCA</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">SVD (next deck)</span>
+    </div>
+</header>
+
+<section class="slide" id="slide-00">
+    <div class="slide-number">00</div>
+    <h2>Topics We'll Cover</h2>
+    <ul class="contents-list">
+        <li><a href="#slide-01">Definition &amp; Geometric Picture</a></li>
+        <li><a href="#slide-02">Computing Eigenvalues: the Characteristic Polynomial</a></li>
+        <li><a href="#slide-03">Diagonalisation</a></li>
+        <li><a href="#slide-04">The Spectral Theorem (Symmetric Matrices)</a></li>
+        <li><a href="#slide-05">Positive (Semi)-Definite Matrices</a></li>
+        <li><a href="#slide-06">Power Iteration: How libraries find them</a></li>
+        <li><a href="#slide-07">PCA &mdash; the most-used eigenproblem in ML</a></li>
+        <li><a href="#slide-08">Eigenvalues &amp; Gradient Flow</a></li>
+        <li><a href="#slide-09">Interactive: 2D Eigenvector Animation</a></li>
+        <li><a href="#slide-10">Cheat Sheet</a></li>
+    </ul>
+</section>
+
+<section class="slide" id="slide-01">
+    <div class="slide-number">01</div>
+    <h2>Definition &amp; Geometric Picture</h2>
+    <p>An <strong>eigenvector</strong> of a square matrix $A$ is a non-zero $\mathbf{v}$ such that $A$ acting on $\mathbf{v}$ produces a scaled copy of $\mathbf{v}$:</p>
+    <p>$$A\mathbf{v} = \lambda \mathbf{v}.$$</p>
+    <p>The scalar $\lambda$ is the <strong>eigenvalue</strong>. Geometrically: $\mathbf{v}$ is a direction that $A$ leaves invariant up to scaling. It might be stretched ($|\lambda| &gt; 1$), shrunk ($|\lambda| &lt; 1$), flipped ($\lambda &lt; 0$), or held fixed ($\lambda = 1$) &mdash; but its <em>direction</em> is preserved.</p>
+
+    <h3>What this excludes and includes</h3>
+    <ul>
+        <li><strong>Pure rotation in 2D</strong> rotates every direction; no real eigenvector exists. (Complex eigenvectors $\mathbf{v} = (1, \pm i)$ with eigenvalues $e^{\pm i\theta}$ exist over $\mathbb{C}$.)</li>
+        <li><strong>Reflection across a line</strong> has the line itself as a $\lambda = 1$ eigenvector and its perpendicular as $\lambda = -1$.</li>
+        <li><strong>Projection onto a line</strong> has the line as $\lambda = 1$ eigenvector and its perpendicular as $\lambda = 0$ (annihilated).</li>
+        <li><strong>Pure scaling</strong> has every direction as eigenvector with the same $\lambda$ &mdash; the matrix is $\lambda I$.</li>
+    </ul>
+
+    <div class="callout">
+        <div class="callout-label">Why we care</div>
+        <p>If you write $\mathbf{x} = c_1\mathbf{v}_1 + \cdots + c_n\mathbf{v}_n$ in an eigenbasis, then $A\mathbf{x} = c_1 \lambda_1 \mathbf{v}_1 + \cdots + c_n \lambda_n \mathbf{v}_n$ &mdash; <em>each component scales independently</em>. Repeated application gives $A^k\mathbf{x} = \sum_i c_i \lambda_i^k \mathbf{v}_i$. The eigenvalue with the largest $|\lambda|$ dominates. This is why eigen-analysis tells you about stability, dynamics, fixed points, and long-time behaviour.</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-02">
+    <div class="slide-number">02</div>
+    <h2>Computing Eigenvalues: the Characteristic Polynomial</h2>
+    <p>$A\mathbf{v} = \lambda \mathbf{v}$ rearranges to $(A - \lambda I)\mathbf{v} = \mathbf{0}$. A non-zero $\mathbf{v}$ exists iff $A - \lambda I$ is singular &mdash; iff its determinant is zero:</p>
+    <p>$$\det(A - \lambda I) = 0.$$</p>
+    <p>This is the <strong>characteristic polynomial</strong> of $A$, of degree $n$. Its $n$ roots (over $\mathbb{C}$) are the eigenvalues. For each $\lambda_i$, the null space $\mathrm{Null}(A - \lambda_i I)$ is the corresponding <strong>eigenspace</strong>.</p>
+
+    <h3>2&times;2 example</h3>
+    <p>For $A = \begin{pmatrix} a &amp; b \\ c &amp; d \end{pmatrix}$,</p>
+    <p>$$\det(A - \lambda I) = (a - \lambda)(d - \lambda) - bc = \lambda^2 - (a+d)\lambda + (ad - bc).$$</p>
+    <p>Coefficients: $a + d = \mathrm{tr}(A)$ and $ad - bc = \det(A)$. So</p>
+    <p>$$\lambda^2 - \mathrm{tr}(A)\lambda + \det(A) = 0.$$</p>
+
+    <h3>Two facts that hold in any dimension</h3>
+    <ul>
+        <li>$\sum_i \lambda_i = \mathrm{tr}(A)$ &mdash; the sum of eigenvalues equals the trace.</li>
+        <li>$\prod_i \lambda_i = \det(A)$ &mdash; the product of eigenvalues equals the determinant.</li>
+    </ul>
+
+    <div class="callout">
+        <div class="callout-label">Don't compute eigenvalues by characteristic polynomial</div>
+        <p>For numerical work, finding roots of polynomials of degree $&gt; 4$ is unstable and (by Abel-Ruffini) requires iterative methods anyway. Real numerical libraries use the QR algorithm with shifts: a sequence of QR decompositions of shifted matrices that converges to upper-triangular form, where eigenvalues sit on the diagonal. <code>numpy.linalg.eig</code> wraps LAPACK's <code>geev</code>.</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-03">
+    <div class="slide-number">03</div>
+    <h2>Diagonalisation</h2>
+    <p>If $A$ has $n$ linearly independent eigenvectors $\mathbf{v}_1, \ldots, \mathbf{v}_n$ with eigenvalues $\lambda_1, \ldots, \lambda_n$, stack the eigenvectors as columns of $V$ and the eigenvalues as the diagonal of $\Lambda = \mathrm{diag}(\lambda_1, \ldots, \lambda_n)$. Then</p>
+    <p>$$A = V \Lambda V^{-1}.$$</p>
+
+    <p>Reading from the right: $V^{-1}\mathbf{x}$ rewrites $\mathbf{x}$ in the eigenbasis; $\Lambda$ scales each coordinate by its eigenvalue; $V$ rewrites back into the standard basis. Same vector, different lens, the action is just per-axis scaling.</p>
+
+    <h3>What diagonalisation gives you</h3>
+    <ul>
+        <li><strong>Powers:</strong> $A^k = V \Lambda^k V^{-1}$. Costs one diagonalisation plus $k$ multiplications by diagonals.</li>
+        <li><strong>Matrix functions:</strong> $f(A) = V f(\Lambda) V^{-1}$ where $f(\Lambda) = \mathrm{diag}(f(\lambda_i))$. Defines $e^A$, $A^{1/2}$, etc.</li>
+        <li><strong>Solving linear ODEs:</strong> $\dot{\mathbf{x}} = A\mathbf{x}$ has solution $\mathbf{x}(t) = e^{At}\mathbf{x}(0) = V e^{\Lambda t} V^{-1} \mathbf{x}(0)$. Each eigenmode evolves independently as $e^{\lambda_i t}$.</li>
+    </ul>
+
+    <h3>When $A$ <em>can't</em> be diagonalised</h3>
+    <p>Some matrices have fewer linearly independent eigenvectors than dimensions &mdash; the canonical example being $\begin{pmatrix}0&amp;1\\0&amp;0\end{pmatrix}$, which has eigenvalue 0 (twice) but only one eigenvector $\mathbf{e}_1$. Such "defective" matrices admit only a Jordan-form decomposition. <strong>Symmetric matrices are never defective</strong> (next slide), which is the saving grace for most ML applications: covariance matrices, Hessians and Gram matrices are all symmetric.</p>
+</section>
+
+<section class="slide" id="slide-04">
+    <div class="slide-number">04</div>
+    <h2>The Spectral Theorem (Symmetric Matrices)</h2>
+    <p>If $A \in \mathbb{R}^{n \times n}$ is <strong>symmetric</strong> ($A^\top = A$), then:</p>
+    <ol>
+        <li>All eigenvalues of $A$ are real.</li>
+        <li>$A$ has an orthonormal basis of eigenvectors.</li>
+        <li>$A$ can be written $A = Q \Lambda Q^\top$ with $Q$ orthogonal ($Q^\top Q = I$) and $\Lambda$ diagonal real.</li>
+    </ol>
+
+    <p>This is the most-used theorem in numerical linear algebra. It says symmetric matrices are <em>always</em> diagonalisable, with an <em>orthogonal</em> change of basis &mdash; the cheapest, most numerically stable kind.</p>
+
+    <h3>What the theorem buys you</h3>
+    <p>Compare with the general formula $A = V\Lambda V^{-1}$:</p>
+    <ul>
+        <li>Solving $V$ has $V^{-1} = V^\top$ &mdash; a transpose, not an inverse. Free numerically and exact.</li>
+        <li>Eigenvectors are orthogonal: project onto each one independently, no spurious coupling.</li>
+        <li>Spectral norm $\|A\|_2 = \max_i |\lambda_i|$. Frobenius norm $\|A\|_F = \sqrt{\sum_i \lambda_i^2}$.</li>
+    </ul>
+
+    <h3>Where symmetry shows up in ML</h3>
+    <ul>
+        <li><strong>Covariance matrix</strong> $\Sigma = \mathbb{E}[(\mathbf{x} - \mu)(\mathbf{x} - \mu)^\top]$ &mdash; symmetric and positive semi-definite. Eigendecomp = PCA.</li>
+        <li><strong>Hessian</strong> $H = \nabla^2 \mathcal{L}(\theta)$ &mdash; symmetric (mixed partial derivatives commute). Eigendecomp = curvature directions.</li>
+        <li><strong>Gram matrix</strong> $G_{ij} = \langle \mathbf{x}_i, \mathbf{x}_j \rangle$ &mdash; symmetric, PSD. Kernel methods.</li>
+        <li><strong>$A^\top A$ for any $A$</strong> &mdash; symmetric, PSD. Foundation of SVD (deck 07).</li>
+    </ul>
+</section>
+
+<section class="slide" id="slide-05">
+    <div class="slide-number">05</div>
+    <h2>Positive (Semi)-Definite Matrices</h2>
+    <p>A symmetric matrix $A$ is</p>
+    <ul>
+        <li><strong>positive semi-definite (PSD)</strong> if $\mathbf{x}^\top A \mathbf{x} \ge 0$ for all $\mathbf{x}$. Equivalently: all eigenvalues $\ge 0$.</li>
+        <li><strong>positive definite (PD)</strong> if $\mathbf{x}^\top A \mathbf{x} &gt; 0$ for all $\mathbf{x} \neq \mathbf{0}$. Equivalently: all eigenvalues $&gt; 0$.</li>
+    </ul>
+    <p>PSD matrices are exactly those that can be written $A = B^\top B$ for some $B$. (Take $B = \Lambda^{1/2} Q^\top$ from the spectral decomposition.) PD if $B$ has full column rank.</p>
+
+    <h3>Why ML cares</h3>
+    <ul>
+        <li><strong>Covariance matrices are PSD</strong> by construction, PD whenever the data spans the full space.</li>
+        <li><strong>A function $\mathcal{L}$ is convex iff $\nabla^2 \mathcal{L}$ is PSD everywhere.</strong> The model class of "convex losses" is exactly the class with PSD Hessian.</li>
+        <li><strong>Cholesky decomposition</strong> $A = LL^\top$ exists iff $A$ is PD. Two-three times faster than LU for solving $A\mathbf{x} = \mathbf{b}$.</li>
+        <li><strong>The whitening transform</strong> $\Sigma^{-1/2}$ is well-defined iff $\Sigma$ is PD. Computed via the spectral square root.</li>
+    </ul>
+
+    <div class="callout">
+        <div class="callout-label">Numerical caution</div>
+        <p>Floating-point rounding can turn a "should be PD" matrix into a barely-not-PD one (a tiny negative eigenvalue). Production code defends with a small ridge $A + \varepsilon I$ before Cholesky. The eigenvalues of $A + \varepsilon I$ are $\lambda_i + \varepsilon$ &mdash; lift them all by $\varepsilon$.</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-06">
+    <div class="slide-number">06</div>
+    <h2>Power Iteration: How libraries find them</h2>
+    <p>The conceptually simplest eigenvalue algorithm. To find the eigenvector of largest $|\lambda|$:</p>
+
+    <ol>
+        <li>Pick a random vector $\mathbf{v}_0$.</li>
+        <li>Repeat: $\mathbf{v}_{k+1} = A \mathbf{v}_k / \|A \mathbf{v}_k\|$.</li>
+        <li>Eigenvalue estimate: $\lambda \approx \mathbf{v}_k^\top A \mathbf{v}_k$ (the Rayleigh quotient).</li>
+    </ol>
+
+    <p>Why it works: write $\mathbf{v}_0 = \sum_i c_i \mathbf{v}_i$ in the eigenbasis. Then $A^k \mathbf{v}_0 = \sum_i c_i \lambda_i^k \mathbf{v}_i$. Dividing by the dominant $\lambda_1^k$ gives $\sum_i c_i (\lambda_i / \lambda_1)^k \mathbf{v}_i$ &mdash; all but the first term go to zero. Convergence rate $|\lambda_2/\lambda_1|$ &mdash; fast when there's a clear leader.</p>
+
+    <h3>Variants</h3>
+    <ul>
+        <li><strong>Inverse iteration:</strong> apply $(A - \mu I)^{-1}$ to find the eigenvalue closest to $\mu$.</li>
+        <li><strong>Lanczos / Arnoldi:</strong> for sparse / large $A$, builds a Krylov subspace, takes eigendecomp of a small projected matrix. Foundation of <code>scipy.sparse.linalg.eigsh</code>.</li>
+        <li><strong>Randomised SVD (Halko-Martinsson-Tropp 2011):</strong> use random Gaussian samples to project to a small subspace, then eigendecompose. The standard fast algorithm for top-$k$ eigenvalues.</li>
+    </ul>
+
+    <div class="callout">
+        <div class="callout-label">Power iteration in transformer-land</div>
+        <p>Spectral normalisation (Miyato et al. 2018) caps the spectral norm of each weight matrix during training by running one step of power iteration per minibatch and dividing by that estimate of $\sigma_1$. One mat-vec product per step &mdash; the cheapest possible spectral regulariser. Used in GANs, BigGAN, and many modern stability tricks.</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-07">
+    <div class="slide-number">07</div>
+    <h2>PCA &mdash; the most-used eigenproblem in ML</h2>
+    <p>Given centred data $X \in \mathbb{R}^{n \times d}$ (rows = samples, columns = features), the empirical covariance is</p>
+    <p>$$\Sigma = \tfrac{1}{n-1} X^\top X \in \mathbb{R}^{d \times d}.$$</p>
+    <p>The eigenvectors of $\Sigma$ are the <strong>principal components</strong>; the eigenvalues are the variances along each direction. Sorted by eigenvalue, the top $k$ components form the optimal $k$-dimensional subspace for capturing variance.</p>
+
+    <h3>The optimisation interpretation</h3>
+    <p>The first principal component is the unit vector $\mathbf{w}_1$ maximising $\mathrm{Var}(X \mathbf{w}_1) = \mathbf{w}_1^\top \Sigma \mathbf{w}_1$. By the Rayleigh quotient, this is exactly the top eigenvector of $\Sigma$. Subsequent components are constrained to be orthogonal to all previous ones &mdash; a sequence of constrained Rayleigh maximisations.</p>
+
+    <h3>What it's used for</h3>
+    <ul>
+        <li><strong>Whitening / pre-processing.</strong> Project onto top-$k$ principal components to remove correlated noise before downstream ML.</li>
+        <li><strong>Dimensional reduction for visualisation.</strong> 2D PCA scatter plots of embeddings.</li>
+        <li><strong>The eigenfaces / eigentokens line of analysis.</strong> Mechanistic interpretability does PCA on activation matrices to find dominant directions; circuits research (Anthropic) uses tools related to this.</li>
+        <li><strong>Foundation for SVD.</strong> The right singular vectors of $X$ are the eigenvectors of $X^\top X = (n-1)\Sigma$. Deck 07.</li>
+    </ul>
+</section>
+
+<section class="slide" id="slide-08">
+    <div class="slide-number">08</div>
+    <h2>Eigenvalues &amp; Gradient Flow</h2>
+    <p>For a loss $\mathcal{L}(\theta)$, gradient descent near a critical point obeys (to leading order)</p>
+    <p>$$\theta_{t+1} - \theta^* \approx (I - \eta H)(\theta_t - \theta^*),$$</p>
+    <p>where $H$ is the Hessian at $\theta^*$. Diagonalise $H = Q\Lambda Q^\top$ and read off: <em>each eigendirection of $H$ contracts by $1 - \eta\lambda_i$ per step</em>.</p>
+
+    <h3>Three regimes per eigendirection</h3>
+    <div class="diagram-grid cols-3">
+        <div class="diagram-panel accent-border">
+            <h4>$0 &lt; \eta\lambda &lt; 1$</h4>
+            <p>Smooth contraction. $|1 - \eta\lambda| &lt; 1$. The direction converges.</p>
+        </div>
+        <div class="diagram-panel y">
+            <h4>$1 &lt; \eta\lambda &lt; 2$</h4>
+            <p>Oscillating contraction. The sign of the error flips each step but magnitude shrinks.</p>
+        </div>
+        <div class="diagram-panel r">
+            <h4>$\eta\lambda &gt; 2$</h4>
+            <p>Divergence. The error grows. This is what "the learning rate is too high" means &mdash; the largest Hessian eigenvalue exceeds $2/\eta$.</p>
+        </div>
+    </div>
+
+    <h3>The condition-number argument</h3>
+    <p>Convergence speed is governed by the slowest-converging direction, which is the smallest $|\lambda_i|$. Maximum stable learning rate is $2/\lambda_{\max}$. So convergence rate $\le 1 - 2\lambda_{\min}/\lambda_{\max} = 1 - 2/\kappa$ where $\kappa = \lambda_{\max}/\lambda_{\min}$ is the <strong>condition number</strong> of $H$. <em>Ill-conditioned losses (high $\kappa$) train slowly &mdash; pre-conditioning, normalisation and adaptive optimisers are designed to reduce $\kappa$.</em></p>
+
+    <div class="callout">
+        <div class="callout-label">Why deep nets train at all</div>
+        <p>The Hessian of a deep network's loss has eigenvalues spanning many orders of magnitude. SGD with momentum and adaptive optimisers (Adam, AdamW) implicitly precondition by per-coordinate scaling, smoothing out the eigenvalue spectrum. LayerNorm and residual connections both help by keeping the effective Hessian better conditioned across layers (Santurkar et al. 2018). The eigenvalue picture is the right way to read these architectural decisions.</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-09">
+    <div class="slide-number">09</div>
+    <h2>Interactive: 2D Eigenvector Animation</h2>
+    <p>The widget plots a unit circle of vectors and animates their evolution under repeated multiplication by a 2&times;2 matrix $A$. Eigenvectors stay on lines through the origin; everything else gets pulled towards (or pushed by) the dominant eigendirection.</p>
+
+    <div class="control-panel">
+        <div class="control-row"><label>a (1,1)</label><input type="range" id="ev-a" min="-2" max="2" step="0.05" value="1.5"><span class="val" id="ev-va">1.50</span></div>
+        <div class="control-row"><label>b (1,2)</label><input type="range" id="ev-b" min="-2" max="2" step="0.05" value="0.4"><span class="val" id="ev-vb">0.40</span></div>
+        <div class="control-row"><label>c (2,1)</label><input type="range" id="ev-c" min="-2" max="2" step="0.05" value="0.4"><span class="val" id="ev-vc">0.40</span></div>
+        <div class="control-row"><label>d (2,2)</label><input type="range" id="ev-d" min="-2" max="2" step="0.05" value="0.8"><span class="val" id="ev-vd">0.80</span></div>
+        <div class="control-row">
+            <button class="btn" id="ev-step">Step (apply A)</button>
+            <button class="btn" id="ev-run">Run</button>
+            <button class="btn secondary" id="ev-reset">Reset circle</button>
+        </div>
+    </div>
+
+    <div class="canvas-wrap">
+        <svg id="ev-svg" viewBox="0 0 600 360" width="600" height="360" xmlns="http://www.w3.org/2000/svg">
+            <rect width="600" height="360" fill="#0d1117"/>
+            <g id="ev-grid"></g>
+            <line id="ev-axis1" x1="0" y1="0" x2="0" y2="0" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="4 3" stroke-opacity="0.6"/>
+            <line id="ev-axis2" x1="0" y1="0" x2="0" y2="0" stroke="#34d399" stroke-width="1.5" stroke-dasharray="4 3" stroke-opacity="0.6"/>
+            <g id="ev-circle"></g>
+        </svg>
+    </div>
+
+    <div class="metric-grid">
+        <div class="metric"><div class="metric-label">tr(A)</div><div class="metric-value" id="m-tr">2.30</div></div>
+        <div class="metric"><div class="metric-label">det(A)</div><div class="metric-value" id="m-d">1.04</div></div>
+        <div class="metric"><div class="metric-label">λ₁</div><div class="metric-value" id="m-l1">1.71</div></div>
+        <div class="metric"><div class="metric-label">λ₂</div><div class="metric-value" id="m-l2">0.59</div></div>
+        <div class="metric"><div class="metric-label">step</div><div class="metric-value" id="m-step">0</div></div>
+    </div>
+
+    <script>
+    (function(){
+        var cx = 300, cy = 180, scale = 60;
+        var A = [[1.5, 0.4],[0.4, 0.8]];
+        var pts = []; // initial unit circle
+        var step = 0;
+        var running = false; var timer = null;
+        function resetCircle() {
+            pts = [];
+            for (var k = 0; k < 36; k++) {
+                var t = 2*Math.PI*k/36;
+                pts.push([Math.cos(t), Math.sin(t)]);
+            }
+            step = 0;
+            render();
+        }
+        function px(x){return cx + x*scale;} function py(y){return cy - y*scale;}
+        function eig2() {
+            var tr = A[0][0]+A[1][1], dt = A[0][0]*A[1][1]-A[0][1]*A[1][0];
+            var disc = tr*tr/4 - dt;
+            if (disc < 0) return null;
+            var sd = Math.sqrt(disc);
+            return [tr/2 + sd, tr/2 - sd];
+        }
+        function eigvec(lam) {
+            // (A - λI) v = 0: pick v = (b, λ - a) if b != 0 else (λ - d, c)
+            if (Math.abs(A[0][1]) > 1e-3) return [A[0][1], lam - A[0][0]];
+            if (Math.abs(A[1][0]) > 1e-3) return [lam - A[1][1], A[1][0]];
+            return [1, 0];
+        }
+        function render() {
+            // grid
+            var g = '';
+            for (var k = -5; k <= 5; k++) {
+                g += '<line x1="'+(cx+k*scale)+'" y1="0" x2="'+(cx+k*scale)+'" y2="360" stroke="#21262d" stroke-width="0.5"/>';
+                g += '<line x1="0" y1="'+(cy+k*scale)+'" x2="600" y2="'+(cy+k*scale)+'" stroke="#21262d" stroke-width="0.5"/>';
+            }
+            g += '<line x1="'+cx+'" y1="0" x2="'+cx+'" y2="360" stroke="#3a3a3a" stroke-width="1"/>';
+            g += '<line x1="0" y1="'+cy+'" x2="600" y2="'+cy+'" stroke="#3a3a3a" stroke-width="1"/>';
+            document.getElementById('ev-grid').innerHTML = g;
+            // eigen axes
+            var eigs = eig2();
+            if (eigs) {
+                var v1 = eigvec(eigs[0]), v2 = eigvec(eigs[1]);
+                var n1 = Math.hypot(v1[0], v1[1]), n2 = Math.hypot(v2[0], v2[1]);
+                if (n1 > 0.001) { v1 = [v1[0]/n1, v1[1]/n1]; }
+                if (n2 > 0.001) { v2 = [v2[0]/n2, v2[1]/n2]; }
+                var L = 8;
+                document.getElementById('ev-axis1').setAttribute('x1', px(-L*v1[0]));
+                document.getElementById('ev-axis1').setAttribute('y1', py(-L*v1[1]));
+                document.getElementById('ev-axis1').setAttribute('x2', px(L*v1[0]));
+                document.getElementById('ev-axis1').setAttribute('y2', py(L*v1[1]));
+                document.getElementById('ev-axis2').setAttribute('x1', px(-L*v2[0]));
+                document.getElementById('ev-axis2').setAttribute('y1', py(-L*v2[1]));
+                document.getElementById('ev-axis2').setAttribute('x2', px(L*v2[0]));
+                document.getElementById('ev-axis2').setAttribute('y2', py(L*v2[1]));
+                document.getElementById('m-l1').textContent = eigs[0].toFixed(2);
+                document.getElementById('m-l2').textContent = eigs[1].toFixed(2);
+            } else {
+                document.getElementById('m-l1').textContent = 'complex';
+                document.getElementById('m-l2').textContent = 'complex';
+            }
+            document.getElementById('m-tr').textContent = (A[0][0]+A[1][1]).toFixed(2);
+            document.getElementById('m-d').textContent = (A[0][0]*A[1][1]-A[0][1]*A[1][0]).toFixed(2);
+            document.getElementById('m-step').textContent = step;
+            // points
+            var s = '';
+            // normalise so the largest fits
+            var maxLen = 0;
+            for (var i = 0; i < pts.length; i++) maxLen = Math.max(maxLen, Math.hypot(pts[i][0], pts[i][1]));
+            var norm = (maxLen > 4) ? 4/maxLen : 1;
+            for (var i = 0; i < pts.length; i++) {
+                var p = pts[i];
+                var x = px(p[0]*norm), y = py(p[1]*norm);
+                s += '<circle cx="'+x+'" cy="'+y+'" r="3" fill="#a78bfa" opacity="0.85"/>';
+            }
+            document.getElementById('ev-circle').innerHTML = s;
+        }
+        function step1() {
+            for (var i = 0; i < pts.length; i++) {
+                var x = pts[i][0], y = pts[i][1];
+                pts[i][0] = A[0][0]*x + A[0][1]*y;
+                pts[i][1] = A[1][0]*x + A[1][1]*y;
+            }
+            step++; render();
+        }
+        function bind(id, label, idx, idx2) {
+            document.getElementById(id).addEventListener('input', function(){
+                A[idx][idx2] = parseFloat(this.value);
+                document.getElementById(label).textContent = parseFloat(this.value).toFixed(2);
+                resetCircle();
+            });
+        }
+        bind('ev-a','ev-va', 0, 0); bind('ev-b','ev-vb', 0, 1);
+        bind('ev-c','ev-vc', 1, 0); bind('ev-d','ev-vd', 1, 1);
+        document.getElementById('ev-step').addEventListener('click', step1);
+        document.getElementById('ev-run').addEventListener('click', function(){
+            running = !running;
+            this.textContent = running ? 'Pause' : 'Run';
+            if (running) timer = setInterval(step1, 600); else clearInterval(timer);
+        });
+        document.getElementById('ev-reset').addEventListener('click', resetCircle);
+        resetCircle();
+    })();
+    </script>
+
+    <p style="margin-top: 1rem;">The yellow and green dashed lines are the eigendirections (real eigenvalues). Step a few times: the circle deforms into an ellipse aligned with the eigenvectors; the long axis grows like $\lambda_1^k$ and the short like $\lambda_2^k$. Try a rotation matrix ($a = d = \cos\theta$, $b = -c = -\sin\theta$): no real eigenvectors, the circle just rotates.</p>
+</section>
+
+<section class="slide" id="slide-10">
+    <div class="slide-number">10</div>
+    <h2>Cheat Sheet</h2>
+    <ul>
+        <li>An <strong>eigenvector</strong> is a non-zero $\mathbf{v}$ with $A\mathbf{v} = \lambda\mathbf{v}$. Geometrically: a direction $A$ doesn't rotate, only scales.</li>
+        <li>Eigenvalues are roots of $\det(A - \lambda I) = 0$. $\sum \lambda_i = \mathrm{tr}\,A$, $\prod \lambda_i = \det A$.</li>
+        <li><strong>Diagonalisation:</strong> if $A$ has $n$ independent eigenvectors, $A = V\Lambda V^{-1}$. Powers, exponentials and ODE solutions are immediate.</li>
+        <li><strong>Spectral theorem:</strong> a real symmetric $A$ has all real eigenvalues, an orthonormal eigenbasis, and decomposes as $A = Q\Lambda Q^\top$ with $Q^\top Q = I$.</li>
+        <li><strong>PSD / PD</strong> matrices have non-negative / positive eigenvalues. PSD iff $\mathbf{x}^\top A \mathbf{x} \ge 0$. Covariance, Hessian-of-convex, Gram are PSD.</li>
+        <li><strong>Power iteration</strong> finds the dominant eigenvector by repeated $A$-multiplication and normalisation. Convergence rate $|\lambda_2/\lambda_1|$. Underlies spectral normalisation.</li>
+        <li><strong>PCA</strong> = eigendecomposition of the covariance matrix. Top eigenvectors are directions of maximum variance.</li>
+        <li>Hessian eigenvalues control gradient-descent convergence. Stable steps require $\eta &lt; 2/\lambda_{\max}$; convergence speed $\propto 1/\kappa$ where $\kappa = \lambda_{\max}/\lambda_{\min}$ is the condition number.</li>
+    </ul>
+
+    <div class="callout">
+        <div class="callout-label">Read next</div>
+        <p>Deck <strong>07 &mdash; SVD, Low-Rank &amp; LoRA</strong> generalises eigendecomposition to non-square matrices. The SVD is what made Eckart-Young, principal-component regression, LoRA, and DeepSeek's MLA possible &mdash; the right way to find the "best $r$-dimensional summary" of a linear map.</p>
+    </div>
+</section>
+
+<footer class="footer">
+    <p>Part of the <a href="https://github.com/BrendanJamesLynskey/LLM_Hub_Linear_Algebra">Linear Algebra for AI / ML</a> series. Sources: Strang, <em>Linear Algebra and Its Applications</em>; Trefethen &amp; Bau, <em>Numerical Linear Algebra</em>; Halko, Martinsson, Tropp, "Finding structure with randomness", SIAM Review 2011; Santurkar et al., "How Does Batch Normalization Help Optimization?", NeurIPS 2018.</p>
+</footer>
+
+</body>
+</html>
