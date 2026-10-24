@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html data-concept="blackboard" lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -84,10 +84,84 @@
     /* deck-mobile-fix:hero */ .hero{overflow:hidden}@supports (overflow-x:clip){.hero{overflow:visible;overflow-x:clip}}
     /* deck-mobile-fix:phone */ @media (max-width:640px){.diagram-box,.tier-fill,.section-divider>span,.action-btn{white-space:normal;overflow-wrap:anywhere}.diagram-grid>*,.diagram-panel,.diagram-box,.code-block,.callout,.metric,.control-group,.control-row>*,.pipeline-body,.roll-track>*,.tier-fill,.timeline-row>*{min-width:0;max-width:100%}p,li,a,code,td,th,.callout,.diagram-panel{overflow-wrap:break-word}pre{max-width:100%;overflow-x:auto}table{display:block;max-width:100%;overflow-x:auto}.katex-display,.bits,.canvas-wrap,.influence-map-wrapper,.timeline-track,div:has(>.bank-cell){max-width:100%;overflow-x:auto;overflow-y:hidden}select,input,img,video,iframe,.action-btn{max-width:100%}canvas{max-width:100%;height:auto}}
     </style>
+<style id="deck-concept">@import url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap');
+html[data-concept=blackboard]{--chalk-hand:'Kalam',cursive;--wood:#5b4532;--wood-2:#3f2f22}
+html[data-concept=blackboard] .hero{min-height:auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);column-gap:2.5rem;align-items:center;align-content:center;justify-items:start;text-align:left;max-width:1160px;margin:1.75rem auto 3.5rem;padding:2.25rem 2.5rem 2.5rem;border:12px solid var(--wood);border-bottom-width:16px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.35),inset 0 2px 18px rgba(0,0,0,.35),0 1px 0 var(--wood-2);background-color:var(--bg-primary);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .05' numOctaves='3' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");position:relative;overflow:visible}
+html[data-concept=blackboard] .hero::before{display:block;content:'';position:absolute;left:-12px;right:-12px;top:auto;bottom:-30px;width:auto;height:14px;transform:none;background:linear-gradient(90deg,transparent 14%,#efeee6 14%,#efeee6 17.5%,transparent 17.5%,transparent 74%,#d9cf84 74%,#d9cf84 76%,transparent 76%),linear-gradient(var(--wood),var(--wood-2));background-size:100% 5px,100% 100%;background-position:0 0,0 0;background-repeat:no-repeat;border-radius:0 0 3px 3px;box-shadow:0 3px 6px rgba(0,0,0,.35)}
+html[data-concept=blackboard] .hero>*{grid-column:1;margin-left:0;margin-right:0}
+html[data-concept=blackboard] .hero .series-label{display:none}
+html[data-concept=blackboard] .bb-defs{position:absolute;width:0;height:0}
+html[data-concept=blackboard] .bb-corner{grid-column:1/-1;width:100%;display:flex;flex-wrap:wrap;gap:.1rem 1.25rem;justify-content:space-between;align-items:baseline;font-family:var(--chalk-hand);color:var(--text-secondary);font-size:1.05rem;margin-bottom:1.2rem}
+html[data-concept=blackboard] .bb-corner span:first-child{white-space:nowrap;font-size:1.5rem;color:var(--accent-3);font-weight:700;filter:url(#bb-chalk)}
+html[data-concept=blackboard] .bb-corner span:first-child::after{content:'';display:block;height:3px;margin-top:-2px;background:currentColor;opacity:.7;border-radius:2px;transform:rotate(-1.2deg)}
+html[data-concept=blackboard] .hero h1{font-size:clamp(2.2rem,4.8vw,3.4rem);line-height:1.1;margin-bottom:1rem;filter:url(#bb-chalk)}
+html[data-concept=blackboard] .hero h1 .accent{color:var(--accent-3)}
+html[data-concept=blackboard] .hero .subtitle{font-size:1.08rem;max-width:none;margin-bottom:1.4rem}
+html[data-concept=blackboard] .hero .tags{justify-content:flex-start;gap:.45rem .55rem;margin-bottom:1.4rem}
+html[data-concept=blackboard] .tag{font-family:var(--chalk-hand);font-size:.95rem;background:none;color:var(--text-primary);border:1.5px solid rgba(236,235,227,.45);border-radius:255px 15px 225px 15px/15px 225px 15px 255px;padding:.05rem .65rem}
+html[data-concept=blackboard] .tag.r,html[data-concept=blackboard] .tag.p{border-color:var(--accent-2)}
+html[data-concept=blackboard] .tag.y{border-color:var(--accent-3)}
+html[data-concept=blackboard] .tag.g{border-color:var(--accent-4)}
+html[data-concept=blackboard] .hero .pipeline{justify-content:flex-start;margin-bottom:0}
+html[data-concept=blackboard] .pipeline-step{font-family:var(--chalk-hand);font-size:.9rem;background:none;border:0;border-bottom:1.5px solid rgba(236,235,227,.4);border-radius:0;color:var(--text-primary);padding:0 .15rem}
+html[data-concept=blackboard] .pipeline-arrow{font-family:var(--chalk-hand);color:var(--accent-3)}
+html[data-concept=blackboard] .bb-fig{grid-column:2;grid-row:2/span 6;width:100%;margin:0}
+html[data-concept=blackboard] .bb-fig figcaption{font-family:var(--chalk-hand);font-size:.95rem;line-height:1.45;color:var(--text-secondary);margin-top:.35rem;text-align:center}
+html[data-concept=blackboard] .concept-art{display:block;width:100%;height:auto;overflow:hidden}
+html[data-concept=blackboard] .bb-grain{filter:url(#bb-chalk)}
+html[data-concept=blackboard] .concept-art path,html[data-concept=blackboard] .concept-art line{fill:none;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
+html[data-concept=blackboard] .concept-art .c-w{stroke:var(--text-primary);opacity:.9}
+html[data-concept=blackboard] .concept-art .c-f{stroke:var(--text-primary);opacity:.38}
+html[data-concept=blackboard] .concept-art .c-y{stroke:var(--accent-3)}
+html[data-concept=blackboard] .concept-art .c-p{stroke:var(--accent-2)}
+html[data-concept=blackboard] .concept-art .c-b{stroke:var(--accent)}
+html[data-concept=blackboard] .concept-art .c-g{stroke:var(--accent-4)}
+html[data-concept=blackboard] .concept-art .c-thin{stroke-width:1.4}
+html[data-concept=blackboard] .concept-art .c-dash{stroke-dasharray:6 6}
+html[data-concept=blackboard] .concept-art .c-dot{fill:var(--text-primary);opacity:.85}
+html[data-concept=blackboard] .concept-art .c-ydot{fill:var(--accent-3)}
+html[data-concept=blackboard] .concept-art .c-pdot{fill:var(--accent-2)}
+html[data-concept=blackboard] .concept-art .c-bdot{fill:var(--accent)}
+html[data-concept=blackboard] .concept-art .c-cell{fill:var(--accent-3)}
+html[data-concept=blackboard] .concept-art text{font-family:var(--chalk-hand);font-size:14px;fill:var(--text-primary)}
+html[data-concept=blackboard] .concept-art .c-yt{fill:var(--accent-3)}
+html[data-concept=blackboard] .concept-art .c-pt{fill:var(--accent-2)}
+html[data-concept=blackboard] .concept-art .c-bt{fill:var(--accent)}
+html[data-concept=blackboard] .slide-number{font-family:var(--chalk-hand);font-size:1.15rem;font-weight:400;color:var(--text-secondary);top:4.3rem;right:1.5rem}
+html[data-concept=blackboard] .slide-number::before{content:'§\00a0'}
+html[data-concept=blackboard] .slide h2{color:var(--text-primary);padding-bottom:.55rem;padding-right:3rem;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 10' preserveAspectRatio='none'%3E%3Cpath d='M2 6 C 60 2, 120 9, 180 5 S 270 3, 298 6' stroke='%23f0e190' stroke-width='2.6' fill='none' stroke-linecap='round' opacity='.85'/%3E%3C/svg%3E") left bottom/min(100%,320px) 10px no-repeat}
+html[data-concept=blackboard] .slide h3{color:var(--accent-3)}
+html[data-concept=blackboard] .slide code{background:none;color:var(--accent-3);padding:0}
+html[data-concept=blackboard] .callout{background:none;border:1.5px dashed rgba(236,235,227,.4);border-radius:3px 12px 4px 10px/10px 3px 12px 4px;padding:.85rem 1.1rem}
+html[data-concept=blackboard] .callout .callout-label,html[data-concept=blackboard] .metric .metric-label{font-family:var(--chalk-hand);text-transform:none;letter-spacing:0;font-size:1rem;color:var(--accent-3)}
+html[data-concept=blackboard] .diagram-grid,html[data-concept=blackboard] .canvas-wrap,html[data-concept=blackboard] .control-panel{background:rgba(0,0,0,.12);border:1.5px solid rgba(236,235,227,.22);border-radius:2px}
+html[data-concept=blackboard] .diagram-panel{background:none;border:1.5px solid rgba(236,235,227,.3);border-radius:255px 12px 225px 12px/12px 225px 12px 255px}
+html[data-concept=blackboard] .diagram-panel.r{border-color:var(--accent-2)}
+html[data-concept=blackboard] .diagram-panel.y{border-color:var(--accent-3)}
+html[data-concept=blackboard] .diagram-panel.g{border-color:var(--accent-4)}
+html[data-concept=blackboard] .diagram-panel.accent-border{border-color:var(--accent)}
+html[data-concept=blackboard] .metric{background:none;border:1.5px solid rgba(236,235,227,.25);border-radius:2px}
+html[data-concept=blackboard] .btn{font-family:var(--chalk-hand);font-size:.95rem;background:none;border:1.5px solid var(--accent-3);color:var(--accent-3);border-radius:255px 12px 225px 12px/12px 225px 12px 255px}
+html[data-concept=blackboard] .btn:hover{background:rgba(240,225,144,.12)}
+html[data-concept=blackboard] .btn.secondary{border-color:rgba(236,235,227,.4);color:var(--text-primary)}
+html[data-concept=blackboard] th{background:none;color:var(--accent-3);border-bottom:2px solid rgba(236,235,227,.45)}
+html[data-concept=blackboard] tr:nth-child(even) td{background:none}
+html[data-concept=blackboard] .contents-list li::before{font-family:var(--chalk-hand);color:var(--accent-3);font-size:1.05rem}
+html[data-concept=blackboard] .footer{font-family:var(--chalk-hand)}
+@media (max-width:820px){
+ html[data-concept=blackboard] .hero{grid-template-columns:minmax(0,1fr);margin:1rem .6rem 3rem;padding:1.4rem 1.1rem 1.6rem;border-width:8px;border-bottom-width:12px}
+ html[data-concept=blackboard] .hero::before{left:-8px;right:-8px;bottom:-24px}
+ html[data-concept=blackboard] .bb-fig{grid-column:1;grid-row:auto;order:10;margin-top:1.5rem}
+}
+</style>
 </head>
 <body>
 
 <header class="hero">
+<!-- deck-concept:start --><svg class="bb-defs" width="0" height="0" aria-hidden="true"><filter id="bb-chalk" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="1.6" result="d"/><feTurbulence type="fractalNoise" baseFrequency="1.7" numOctaves="1" seed="9" result="g"/><feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.6 1.45" result="m"/><feComposite in="d" in2="m" operator="in"/></filter></svg>
+<div class="bb-corner" aria-hidden="true"><span>Lecture 6</span><span>Linear Algebra for AI</span></div>
+<figure class="bb-fig"><svg class="concept-art" viewBox="0 0 420 300" role="img" aria-label="Vectors on a circle moved by a matrix; only the eigenvectors keep their direction" xmlns="http://www.w3.org/2000/svg"><g class="bb-grain"><path class="c-f c-thin" d="M186.7 196.5 L182.7 192.8 L176.9 191.8 L172.9 187.6 L168.9 183.7 L167.3 178.4 L164.8 173.6 L162.4 168.8 L160.5 163.8 L159.5 157.9 L157.6 152.8 L158.1 147.8 L158.1 142.5 L159.3 136.8 L161.5 131.8 L163.9 126.7 L166.5 122.3 L169.9 118.4 L172.8 113.1 L177.7 109.9 L181.5 107.1 L185.8 102.9 L191.5 101.4 L195.9 99 L201.5 97.5 L206.6 98 L212.5 98.6 L218 99.2 L222.9 100.2 L228.1 101.1 L232.9 103.1 L238.1 106.5 L241.5 110.5 L246 113.1 L249.6 116.8 L252.6 122 L255.4 126.5 L258.1 131.3 L260.4 136.2 L260.8 141.1 L262.4 146.5 L262.5 152.5 L261.2 157.9 L259.6 162.7 L258.7 167.7 L255.8 173.4 L253.7 178.4 L250.7 182.5 L246.9 186.2 L242.8 189.1 L238.8 194.1 L234.3 196.5 L229.3 198.5 L224.1 200.6 L218.9 201.8 L212.9 200.8 L207.5 201.5 L202.3 201 L197.2 200.8 L192 198.9 L186.7 196.4 L182.3 193.9 L178.2 190.7 L173 187.7 L168.9 183.7 L166.7 178.9 L164.2 174.3 L162.1 168.9"/><path class="c-f c-thin" d="M261 149.5 L275.2 142.4 L288.8 137.1 L300.4 130.3 L314.3 123.6"/><path class="c-f c-thin" d="M311.9 128.3 L314.1 123.3 L309.1 123.8"/><path class="c-f c-thin" d="M257.1 130.9 L272.2 124.7 L287 118.2 L301.3 112.8 L316.3 106"/><path class="c-f c-thin" d="M312.8 109.3 L316.9 106 L311.2 105.9"/><path class="c-f c-thin" d="M245.9 112.9 L261.2 108.8 L273.8 103.3 L288.9 100.1 L302.3 94.5"/><path class="c-f c-thin" d="M298.4 98.2 L301.8 94.5 L297.1 94.3"/><path class="c-f c-thin" d="M229 100.9 L243.8 99.3 L260 95.7 L273.7 92"/><path class="c-f c-thin" d="M270.2 94.4 L274.8 92.9 L268.4 90.6"/><path class="c-f c-thin" d="M209.5 98.8 L236.4 98.5"/><path class="c-f c-thin" d="M231.3 100.3 L235.3 97 L231.6 95.9"/><path class="c-f c-thin" d="M190.9 102.9 L194.3 111.4"/><path class="c-f c-thin" d="M190.6 109.5 L194.2 112.2 L194.5 106.9"/><path class="c-f c-thin" d="M173.1 112.6 L154.8 131.9"/><path class="c-f c-thin" d="M157 125.9 L154.2 130.7 L159.1 129.4"/><path class="c-f c-thin" d="M162.5 129.4 L149.6 138.8 L135.8 145.6 L123.4 153.7"/><path class="c-f c-thin" d="M127.6 150.7 L124.9 153.4 L128.8 153.6"/><path class="c-f c-thin" d="M157 150.3 L145.8 157.4 L132.8 162.6 L119.7 168.9 L106 175.5"/><path class="c-f c-thin" d="M108.2 171.1 L105.7 176.5 L111.1 175.6"/><path class="c-f c-thin" d="M161.5 169.6 L146.6 175.2 L133.9 182.5 L118.9 187 L104 194.2"/><path class="c-f c-thin" d="M108 189.6 L103.7 194.2 L108.6 194.3"/><path class="c-f c-thin" d="M172.3 187.5 L158.8 191.1 L146.1 196.2 L132.9 200.9 L117.8 204.8"/><path class="c-f c-thin" d="M122.3 202.2 L117.4 205.9 L122.9 205.4"/><path class="c-f c-thin" d="M189.3 197.9 L176.1 201.4 L160.4 205 L145.7 208.2"/><path class="c-f c-thin" d="M150.5 204.8 L145.2 207.8 L151.5 209.6"/><path class="c-f c-thin" d="M210.6 202.5 L184.5 201.7"/><path class="c-f c-thin" d="M189.3 200.7 L184.7 201.4 L188.7 203.7"/><path class="c-f c-thin" d="M229.3 198.8 L225.4 188.3"/><path class="c-f c-thin" d="M228.8 192.5 L226.7 189.1 L225.6 193.6"/><path class="c-f c-thin" d="M246 186.9 L264.7 168.5"/><path class="c-f c-thin" d="M264.6 173.6 L265.8 169.3 L260.8 170.2"/><path class="c-f c-thin" d="M258.6 169.1 L270.2 162.4 L283.9 153.7 L296.1 145.7"/><path class="c-f c-thin" d="M294.1 150 L295.8 145.3 L291.1 146.9"/><path class="c-y c-dash" d="M52.4 214 L65.7 209.3 L80 204.3 L92.4 198.4 L105.1 193.4 L118.4 187.9 L132.5 182.7 L144.2 177.6 L156.9 170.8 L170.5 166.3 L184.1 160 L197.2 156.4 L209.4 149.8 L223.1 145.2 L236.9 139.5 L249.4 133 L262.4 127.4 L274.4 122.1 L289.3 117 L300.9 112.6 L314.6 105.8 L328.1 102.2 L339.8 96.8 L354.1 90.9 L367.2 84.8"/><path class="c-y" d="M209.7 150.5 L223.1 145 L236.7 139.7 L249.6 133.1 L262.7 128.2 L276.7 122.8 L288.5 118.1 L302.6 110.7 L316.3 105.7"/><path class="c-y" d="M309.6 112.9 L316.1 106.3 L307.9 105.2"/><path class="c-p c-dash" d="M145.9 -8.1 L150.1 6.6 L156.2 18.3 L161 31.6 L166.2 44.6 L171.2 59.2 L178.2 71.2 L182.3 85.1 L188.4 98.5 L193.8 110.6 L199.5 124.4 L205.6 137.2 L210 150 L214.8 162.4 L221.3 176.1 L225.9 189.3 L231 201.4 L236.6 215.4 L242.5 229.2 L247.6 242 L252.9 255.8 L259.2 267.7 L264 281 L268.9 294.3 L275.5 307.4"/><path class="c-p" d="M209.2 150.4 L217.2 169.7 L225.7 188"/><path class="c-p" d="M219.6 183.3 L226.5 187.5 L226.7 179.8"/><text class="c-t" x="24" y="36" text-anchor="start" style="font-size:19px">Av = λv</text><text class="c-t" x="24" y="284" text-anchor="start" style="font-size:13px">only the eigen-directions stay put</text></g></svg><figcaption>Push every point of the circle through A: only along the eigenvectors does direction survive.</figcaption></figure>
+<!-- deck-concept:end -->
     <div class="series-label">Linear Algebra for AI &mdash; Presentation 06</div>
     <h1>Eigenvalues &amp; <span class="accent">Eigenvectors</span></h1>
     <p class="subtitle">A matrix's eigenvectors are the directions it doesn't rotate. Find them and the matrix becomes a diagonal &mdash; and a thousand questions about gradients, stability, PCA and Hessians become trivial.</p>
